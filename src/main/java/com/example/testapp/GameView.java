@@ -26,16 +26,55 @@ public class GameView extends VerticalLayout {
 
         TextField searchField = new TextField("Search by name");
         Button searchButton = new Button("Search");
+        Button addButton = new Button("Add");
+        Button editButton = new Button("Edit");
+        Button deleteButton = new Button("Delete");
 
         grid = new Grid<>();
         grid.addColumn(Game::getName).setHeader("Name");
+        grid.addColumn(Game::getDescription).setHeader("Description");
+        grid.addColumn(Game::getId).setHeader("Id");
 
         searchButton.addClickListener(event -> {
             String searchTerm = searchField.getValue();
             grid.setItems(gameRepository.findByNameContains(searchTerm));
         });
 
-        add(searchField, searchButton, grid);
+        addButton.addClickListener(event -> {
+            Game newGame = new Game();
+            newGame.setName("New Game");
+            newGame.setDescription("New Description");
+            gameRepository.save(newGame);
+            grid.setItems(gameRepository.findAll());
+        });
+
+        editButton.addClickListener(event -> {
+            Game selectedGame = grid.getSelectedItems().iterator().next();
+            if (selectedGame != null) {
+                TextField nameField = new TextField("Name");
+                TextField descriptionField = new TextField("Description");
+                nameField.setValue(selectedGame.getName());
+                descriptionField.setValue(selectedGame.getDescription());
+                Button saveButton = new Button("Save");
+                saveButton.addClickListener(e -> {
+                    selectedGame.setName(nameField.getValue());
+                    selectedGame.setDescription(descriptionField.getValue());
+                    gameRepository.save(selectedGame);
+                    grid.setItems(gameRepository.findAll());
+                });
+                add(nameField, descriptionField, saveButton);
+            }
+        });
+
+        deleteButton.addClickListener(event -> {
+            Game selectedGame = grid.getSelectedItems().iterator().next();
+            if (selectedGame != null) {
+                gameRepository.delete(selectedGame);
+                grid.setItems(gameRepository.findAll());
+            }
+        });
+
+        add(searchField, searchButton, addButton, editButton, deleteButton, grid);
         grid.setItems(gameRepository.findAll());
     }
 }
