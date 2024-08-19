@@ -8,11 +8,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 
-@PageTitle("Games")
-@Route(value = "games")
+@PageTitle("Game")
+@Route(value = "game")
 @RouteAlias(value = "")
 public class GameView extends VerticalLayout {
-    private final GameRepository gameRepository;
+    private final  GameRepository gameRepository;
     private Grid<Game> grid;
 
     public GameView(GameRepository gameRepository) {
@@ -43,6 +43,7 @@ public class GameView extends VerticalLayout {
                 remove(layout);
             });
         });
+
         Button editButton = new Button("Edit");
         Button deleteButton = new Button("Delete");
 
@@ -54,14 +55,6 @@ public class GameView extends VerticalLayout {
         searchButton.addClickListener(event -> {
             String searchTerm = searchField.getValue();
             grid.setItems(gameRepository.findByNameContains(searchTerm));
-        });
-
-        addButton.addClickListener(event -> {
-            Game newGame = new Game();
-            newGame.setName("New Game");
-            newGame.setDescription("New Description");
-            gameRepository.save(newGame);
-            grid.getDataProvider().refreshAll();
         });
 
         editButton.addClickListener(event -> {
