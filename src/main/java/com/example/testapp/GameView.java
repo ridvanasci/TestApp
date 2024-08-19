@@ -27,6 +27,22 @@ public class GameView extends VerticalLayout {
         TextField searchField = new TextField("Search by name");
         Button searchButton = new Button("Search");
         Button addButton = new Button("Add");
+        addButton.addClickListener(event -> {
+            TextField nameField = new TextField("Name");
+            TextField descriptionField = new TextField("Description");
+            Button saveButton = new Button("Save");
+            VerticalLayout layout = new VerticalLayout(nameField, descriptionField, saveButton);
+            add(layout);
+
+            saveButton.addClickListener(e -> {
+                Game newGame = new Game();
+                newGame.setName(nameField.getValue());
+                newGame.setDescription(descriptionField.getValue());
+                gameRepository.save(newGame);
+                grid.setItems(gameRepository.findAll());
+                remove(layout);
+            });
+        });
         Button editButton = new Button("Edit");
         Button deleteButton = new Button("Delete");
 
@@ -45,7 +61,7 @@ public class GameView extends VerticalLayout {
             newGame.setName("New Game");
             newGame.setDescription("New Description");
             gameRepository.save(newGame);
-            grid.setItems(gameRepository.findAll());
+            grid.getDataProvider().refreshAll();
         });
 
         editButton.addClickListener(event -> {

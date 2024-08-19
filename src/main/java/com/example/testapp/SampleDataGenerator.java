@@ -14,7 +14,7 @@ public class SampleDataGenerator {
 
     @PostConstruct
     public void generateData() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 1; i < 100; i++) {
             gameRepository.save(new Game((long) i, "Game " + i, "Description " + i));
         }
     }
